@@ -131,7 +131,8 @@ int main(int argc, char ** argv)
 
 	// Load server generated config file
 	string generated_path = config_directory + "istatserver_generated.conf";
-	Config configGenerated(arguments.get("c", generated_path.c_str()));
+//	Config configGenerated(arguments.get("c", generated_path.c_str()));
+	Config configGenerated(generated_path.c_str());
 	configGenerated.parse();
 	configGenerated.validate();
 

@@ -1,6 +1,6 @@
 # istatserver
 
-A system monitoring daemon that is used in conjunction with [iStat for iOS](https://bjango.com/ios/istat/) and [iStat for macOS](https://bjango.com/mac/istat/) to remotely monitor computers.
+istatserver is a system monitoring daemon that is used in conjunction with [iStat for iOS](https://bjango.com/ios/istat/) and [iStat for macOS](https://bjango.com/mac/istat/) to remotely monitor computers.
 
 -----
 
