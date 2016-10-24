@@ -1,6 +1,6 @@
-About istatserver
+About iStat Server
 
-istatserer is a system monitoring daemon that is used in conjunction with iStat for iOS (https://bjango.com/ios/istat/) and iStat for macOS (https://bjango.com/mac/istat/) to remotely monitor computers.
+iStat Server is a system monitoring daemon that is used in conjunction with iStat for iOS (https://bjango.com/ios/istat/) and iStat for macOS (https://bjango.com/mac/istat/) to remotely monitor computers.
 
 
 Supported OSs
@@ -15,13 +15,13 @@ Requirements
 - C and C++ compilers such as gcc and g++.
 - Auto tools (autoconf and automake).
 - OpenSSL/libssl + development libraries.
-- Sqlite3 + development libraries.
+- sqlite3 + development libraries.
 - libxml2 + development libraries.
 
 We have a package guide available to help you install all the required packages for your OS - https://bjango.com/help/istat3/linuxpackages/
 
 
-Build procedure
+Building and starting iStat Server
 - cd /path/to/istatserver
 - ./autogen
 - ./configure
@@ -31,4 +31,5 @@ Build procedure
 
 A default passcode is generated on install. It can be found in the preference file, which is generally located at /usr/local/etc/istatserver/istatserver.conf. iStat for iOS and iStat for macOS will ask for this passcode the first time you connect to your computer.
 
-Example boot scripts for rc.d, upstart and system are located inside the resources folder. You may need to customize these depending on your OS
+
+Example boot scripts for rc.d, upstart and system are located inside the resources folder. You may need to customize these depending on your OS
