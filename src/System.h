@@ -36,7 +36,7 @@
 #include <stdio.h>
 
 #define SERVER_VERSION 3.00
-#define SERVER_BUILD 102
+#define SERVER_BUILD 103
 #define PROTOCOL_VERSION 3
 #define HISTORY_SIZE 600
 
