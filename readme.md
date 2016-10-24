@@ -25,7 +25,7 @@ We have a package guide [available](https://bjango.com/help/istat3/linuxpackages
 -----
 
 ### Building and starting iStat Server
-- [Download](https://download.bjango.com/istatserverlinux.tar.gz) and decompress source
+- [Download](https://download.bjango.com/istatserverlinux) and decompress source
 - cd /path/to/istatserver
 - ./autogen
 - ./configure
