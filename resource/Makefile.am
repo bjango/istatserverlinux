@@ -1,6 +1,6 @@
 
 dist_man_MANS = istatserver.1 istatserver.conf.5
-EXTRA_DIST = istatserver.conf istatserver_generated.conf
+EXTRA_DIST = istatserver.conf istatserver_generated.conf systemd upstart rc.d
 
 #dist_sysconf_DATA = istatserver.conf
 

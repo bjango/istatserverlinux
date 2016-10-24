@@ -1,0 +1,17 @@
+#
+# istatserver daemon service unit file
+#
+
+[Unit]
+Description=System monitoring daemon for remote monitoring with iStat for iOS or iStat for macOS
+Documentation=man:istatserver(1) 
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/istatserver -d
+Restart=on-abort
+RestartSec=5
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

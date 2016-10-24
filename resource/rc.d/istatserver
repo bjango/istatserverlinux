@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+
+# PROVIDE: istatserver
+# REQUIRE: FILESYSTEMS NETWORKING netif
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="istatserver"
+command="/usr/local/bin/istatserver"
+rcvar="istatserver_enable"
+command_args="-d"
+
+load_rc_config $name
+run_rc_command "$1"
