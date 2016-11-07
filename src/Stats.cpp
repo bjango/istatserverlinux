@@ -101,6 +101,22 @@ void Stats::startStats()
 	}
 #endif
 
+	#ifdef HAVE_LIBKVM
+	kvm_t *kd;
+	if ((kd = kvm_open(NULL, NULL, NULL, O_RDONLY, NULL)) != NULL)
+	{
+		cpuStats.kd = kd;
+		loadStats.kd = kd;
+		memoryStats.kd = kd;
+		activityStats.kd = kd;
+		sensorStats.kd = kd;
+		networkStats.kd = kd;
+		diskStats.kd = kd;
+		batteryStats.kd = kd;
+		processStats.kd = kd;
+	}
+	#endif
+
 	#ifdef USE_SQLITE
 	if(historyEnabled == true)
 	{

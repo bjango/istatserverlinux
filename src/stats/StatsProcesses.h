@@ -56,7 +56,7 @@ class process_info
 		long long sampleID;
 		char name[128];
 };
-class StatsProcesses
+class StatsProcesses : public StatsBase
 {
 	public:
 		void update(long long sampleID, double ticks);

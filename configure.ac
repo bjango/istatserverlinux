@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([istatserver], [3.0], [http://github.com/bjango/istatserverlinux/issues])
+AC_INIT([istatserver], [3.01], [http://github.com/bjango/istatserverlinux/issues])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST

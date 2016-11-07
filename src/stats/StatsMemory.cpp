@@ -105,7 +105,7 @@ void StatsMemory::update(long long sampleID)
 	addSample(_mem, sampleID);
 }
 
-#elif defined(USE_MEM_SYSCTLBYNAME) && defined(HAVE_SYSCTLBYNAME)
+#elif defined(HAVE_SYSCTLBYNAME) && (defined(USE_MEM_SYSCTLBYNAME) || (defined(__FreeBSD__) && __FreeBSD__ >= 11))
 
 void StatsMemory::init()
 {
@@ -120,6 +120,9 @@ void StatsMemory::init()
 	databaseKeys.push_back("swaptotal");
 	databaseKeys.push_back("swapused");
 
+	databaseKeys.push_back("swapin");
+	databaseKeys.push_back("swapout");
+
 	databaseMap.push_back(memory_value_total);
 	databaseMap.push_back(memory_value_free);
 	databaseMap.push_back(memory_value_active);
@@ -131,6 +134,9 @@ void StatsMemory::init()
 	databaseMap.push_back(memory_value_swaptotal);
 	databaseMap.push_back(memory_value_swapused);
 
+	databaseMap.push_back(memory_value_swapin);
+	databaseMap.push_back(memory_value_swapout);
+
 	_init();
 }
 
@@ -139,7 +145,7 @@ void StatsMemory::update(long long sampleID)
 	mem_data _mem;
 	prepareSample(&_mem);
 
-	u_int _total, _inactive, _free, _active, _cached, _wired, _swaptotal, _swapused;
+	u_int _total, _inactive, _free, _active, _cached, _wired, _swaptotal, _swapused, _swapin, _swapout;
 	long _buf;
 
 	int pagesize = getpagesize();
@@ -170,9 +176,29 @@ void StatsMemory::update(long long sampleID)
     if (sysctlbyname("vm.swap_anon_use", &_swapused, &len, NULL, 0) < 0)
     	_swapused = 0;
 
+    if (sysctlbyname("vm.stats.vm.v_swappgsin", &_swapin, &len, NULL, 0) < 0)
+    	_swapin = 0;
+
+    if (sysctlbyname("vm.stats.vm.v_swappgsout", &_swapout, &len, NULL, 0) < 0)
+    	_swapout = 0;
+
+
+
 	len = sizeof(_buf);
     if (sysctlbyname("vfs.bufspace", &_buf, &len, NULL, 0) < 0)
     	_buf = 0;
+
+    if(_buf == 0)
+    {
+		size_t bufsizelen;
+        long bufsize;
+        bufsizelen = sizeof(bufsize);
+
+        if (sysctlbyname("kern.nbuf", &bufsize, &bufsizelen, NULL, 0) >= 0)
+        {
+        	_buf = ((bufsize * 16) * 1024);
+        }
+    }
 
 	_mem.values[memory_value_total] = (double)(_total * pagesize);
 	_mem.values[memory_value_free] = (double)(_free * pagesize);
@@ -184,6 +210,20 @@ void StatsMemory::update(long long sampleID)
 	_mem.values[memory_value_buffer] = (double)(_buf);
 	_mem.values[memory_value_swapused] = (double)(_swapused * pagesize);
 	_mem.values[memory_value_swaptotal] = (double)(_swaptotal * pagesize);
+	_mem.values[memory_value_swapin] = (double)(_swapin * pagesize);
+	_mem.values[memory_value_swapout] = (double)(_swapout * pagesize);
+
+  #if defined(HAVE_LIBKVM) && defined(__FreeBSD__)
+	struct kvm_swap swap[1];
+	{
+		if (kvm_getswapinfo(kd, swap, 1, 0) != -1)
+		{
+			_mem.values[memory_value_swaptotal] = (double)((double)swap[0].ksw_total * pagesize);
+			_mem.values[memory_value_swapused] = (double)((double)swap[0].ksw_used * pagesize);
+		}
+	}
+  #endif
+
 
 	addSample(_mem, sampleID);
 }
@@ -354,7 +394,6 @@ void StatsMemory::update(long long sampleID)
 	mem_data _mem;
 	prepareSample(&_mem);
 
-	kvm_t *kd;
 	size_t len;
 	double kbpp;
 	struct vmmeter sum;
@@ -365,17 +404,10 @@ void StatsMemory::update(long long sampleID)
 		{ NULL }
 	};
 
-	if ((kd = kvm_open(NULL, NULL, NULL, O_RDONLY, NULL)) == NULL)
-	{
-		fprintf(stderr, "kvm_open(): %s\n", strerror(errno));
-		return;
-	}
-
 	/* get virtual memory data */
 	if (kvm_nlist(kd, nl) == -1)
 	{
-		fprintf(stderr, "kvm_nlist(): %s\n", strerror(errno));
-		kvm_close(kd);
+		cout << "kvm_nlist(): " << strerror(errno) << endl;
 		return;
 	}
 
@@ -383,8 +415,7 @@ void StatsMemory::update(long long sampleID)
 
 	if (kvm_read(kd, nl[0].n_value, &sum, len) == -1)
 	{
-		fprintf(stderr, "kvm_read(): %s\n", strerror(errno));
-		kvm_close(kd);
+		cout << "kvm_read(): " << strerror(errno) << endl;
 		return;
 	}
 
@@ -399,8 +430,8 @@ void StatsMemory::update(long long sampleID)
 	_mem.values[memory_value_wired] = (double)(sum.v_wire_count * kbpp);
 	_mem.values[memory_value_used] = (double)(_mem.values[memory_value_active] + _mem.values[memory_value_wired]);
 
-	_mem.values[memory_value_swapin] = (double)(sum.v_swappgsin);
-	_mem.values[memory_value_swapout] = (double)(sum.v_swappgsout);
+	_mem.values[memory_value_swapin] = (double)(sum.v_swappgsin * kbpp);
+	_mem.values[memory_value_swapout] = (double)(sum.v_swappgsout * kbpp);
 
 #ifdef HAVE_SYSCTLBYNAME
 		size_t bufsizelen;
@@ -415,15 +446,12 @@ void StatsMemory::update(long long sampleID)
 
 	if (kvm_getswapinfo(kd, swap, 1, 0) == -1)
 	{
-		fprintf(stderr, "kvm_getswapinfo(): %s\n", strerror(errno));
-		kvm_close(kd);
+		cout << "kvm_getswapinfo(): " << strerror(errno) << endl;
 		return;
 	}
 
-	_mem.values[memory_value_swaptotal] = (double)(swap[0].ksw_total * kbpp);
-	_mem.values[memory_value_swapused] = (double)(swap[0].ksw_used * kbpp);
-
-	kvm_close(kd);
+	_mem.values[memory_value_swaptotal] = (double)((double)swap[0].ksw_total * kbpp);
+	_mem.values[memory_value_swapused] = (double)((double)swap[0].ksw_used * kbpp);
 
 	addSample(_mem, sampleID);
 

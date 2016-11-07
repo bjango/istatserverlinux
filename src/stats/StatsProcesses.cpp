@@ -210,12 +210,6 @@ void StatsProcesses::update(long long sampleID, double totalTicks)
 	#endif
 	int n_processes;
 	int i;
-	kvm_t *kd;
-
-	if ((kd = kvm_open(NULL, NULL, NULL, O_RDONLY, NULL)) == NULL)
-	{
-		return;
-	}
 
 	#if defined(PROCESSES_KVM_NETBSD)
 	p = kvm_getproc2(kd, KERN_PROC_ALL, 0, sizeof(kinfo_proc2), &n_processes);
@@ -277,8 +271,6 @@ void StatsProcesses::update(long long sampleID, double totalTicks)
 			}
 		}
 	}
-
-	kvm_close(kd);
 }
 
 #elif defined(USE_PROCESSES_PROCFS)

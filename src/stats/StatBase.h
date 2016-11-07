@@ -286,6 +286,10 @@ class StatsBase
 		bool historyEnabled;
 		bool debugLogging;
 
+		#ifdef HAVE_LIBKVM
+		kvm_t *kd;
+		#endif
+
 		#ifdef USE_SQLITE
 		std::vector<DatabaseItem> databaseQueue;
 		Database _database;
