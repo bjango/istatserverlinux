@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([istatserver], [3.01], [http://github.com/bjango/istatserverlinux/issues])
+AC_INIT([istatserver], [3.02], [http://github.com/bjango/istatserverlinux/issues])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
@@ -119,6 +119,14 @@ AC_CHECK_LIB([ssl],[SSL_library_init], [
 			LIBS="$LIBS -lssl -lcrypto"
 			use_tls=yes
 		], [])
+	], [])
+], [])
+
+AC_CHECK_LIB([ssl],[OPENSSL_init_ssl], [
+	AC_CHECK_LIB([crypto],[X509_new], [
+		AC_DEFINE_UNQUOTED([HAVE_OPENSSL],1,[Define is openssl is available])
+		LIBS="$LIBS -lssl -lcrypto"
+		use_tls=yes
 	], [])
 ], [])
 

@@ -62,6 +62,7 @@
 class Stats
 {
 	public:
+		void prepare();
 		void start();
 		void startStats();
 		void update_system_stats();

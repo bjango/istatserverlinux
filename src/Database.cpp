@@ -95,7 +95,11 @@ void DatabaseItem::prepare(string sql, sqlite3 *db)
 
 void DatabaseItem::finalize()
 {
+	if(_statement == NULL)
+		return;
+
 	sqlite3_finalize(_statement);
+	_statement = NULL;
 }
 
 int DatabaseItem::query()

@@ -35,8 +35,8 @@
 #include <time.h>
 #include <stdio.h>
 
-#define SERVER_VERSION 3.00
-#define SERVER_BUILD 103
+#define SERVER_VERSION 3.02
+#define SERVER_BUILD 104
 #define PROTOCOL_VERSION 3
 #define HISTORY_SIZE 600
 

@@ -84,7 +84,7 @@ void Stats::close()
 	#endif
 }
 
-void Stats::startStats()
+void Stats::prepare()
 {
 #ifdef HAVE_LIBKSTAT
 	if(NULL == (ksh = kstat_open()))
@@ -101,7 +101,7 @@ void Stats::startStats()
 	}
 #endif
 
-	#ifdef HAVE_LIBKVM
+#ifdef HAVE_LIBKVM
 	kvm_t *kd;
 	if ((kd = kvm_open(NULL, NULL, NULL, O_RDONLY, NULL)) != NULL)
 	{
@@ -115,8 +115,11 @@ void Stats::startStats()
 		batteryStats.kd = kd;
 		processStats.kd = kd;
 	}
-	#endif
+#endif
+}
 
+void Stats::startStats()
+{
 	#ifdef USE_SQLITE
 	if(historyEnabled == true)
 	{

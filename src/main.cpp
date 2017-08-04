@@ -159,6 +159,31 @@ int main(int argc, char ** argv)
 	
 	::pn_signalresponder = &signalresponder;
 
+
+	// Prepare stats
+	stats.historyEnabled = true;
+	if(to_int(config.get("disable_history_storage", "0")) == 1)
+		stats.historyEnabled = false;
+
+	stats.diskStats.useMountPaths = to_int(config.get("disk_mount_path_label", "0"));
+	stats.diskStats.customNames = config.get_array("disk_rename_label");
+	stats.diskStats.disableFiltering = to_int(config.get("disk_disable_filtering", "0"));
+
+	stats.debugLogging = false;
+	stats.sampleID = 0;
+
+	bool debugSocket = false;
+	bool debugStats = false;
+
+	if (arguments.is_set("debug"))
+		debugStats = true;
+		
+	if (arguments.is_set("debugsocket"))
+		debugSocket = true;
+
+	stats.debugLogging = debugStats;
+	stats.prepare();
+
 	// Create socket, pid file and put in background if desired
 	unixdaemon.create(arg_d, cf_server_user, cf_server_group);
 
@@ -193,20 +218,6 @@ int main(int argc, char ** argv)
 	signal(SIGTERM, handler);
 	signal(SIGPIPE, handler);
 	
-	stats.debugLogging = false;
-	stats.sampleID = 0;
-
-	bool debugSocket = false;
-	bool debugStats = false;
-
-	if (arguments.is_set("debug"))
-		debugStats = true;
-		
-	if (arguments.is_set("debugsocket"))
-		debugSocket = true;
-
-	stats.debugLogging = debugStats;
-
 	listener._session = (long)get_current_time();
 	listener._serverUUID = serverUUID;
 	listener._sslEnabled = 1;
@@ -233,13 +244,7 @@ int main(int argc, char ** argv)
 	
 	sockets += listener;
 
-	stats.historyEnabled = true;
-	if(to_int(config.get("disable_history_storage", "0")) == 1)
-		stats.historyEnabled = false;
 
-	stats.diskStats.useMountPaths = to_int(config.get("disk_mount_path_label", "0"));
-	stats.diskStats.customNames = config.get_array("disk_rename_label");
-	stats.diskStats.disableFiltering = to_int(config.get("disk_disable_filtering", "0"));
 	stats.start();
 
 	while (1)
@@ -304,7 +309,13 @@ SSL_CTX* InitServerCTX(void)
 
     OpenSSL_add_all_algorithms();
     SSL_load_error_strings();
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     SSL_CTX *ctx = SSL_CTX_new(TLSv1_server_method());
+#else
+    SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
+#endif
+    
     if ( ctx == NULL )
     {
         ERR_print_errors_fp(stdout);
@@ -323,6 +334,7 @@ SSL_CTX* InitServerCTX(void)
     SSL_CTX_set_tmp_ecdh(ctx, ecdh);
     EC_KEY_free(ecdh);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     DH *dh = get_dh2236();
     if (dh == NULL) {
         cout << "Failed to get DH params" << endl;
@@ -331,10 +343,12 @@ SSL_CTX* InitServerCTX(void)
     }
     SSL_CTX_set_tmp_dh(ctx, dh);
     DH_free(dh);
+#endif
 
     return ctx;
 }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 DH *get_dh2236()
 	{
 	static unsigned char dh2236_p[]={
@@ -375,6 +389,7 @@ DH *get_dh2236()
 		{ DH_free(dh); return(NULL); }
 	return(dh);
 }
+#endif
 
 void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
 {

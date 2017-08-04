@@ -126,11 +126,13 @@ int Socket::listen()
     timeout.tv_sec = 10;
     timeout.tv_usec = 0;
 
-	if (setsockopt (socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+	if (setsockopt (socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
         cout << "setsockopt failed" << endl;
+	}
 
-    if (setsockopt (socket, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+    if (setsockopt (socket, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0){
         cout << "setsockopt failed" << endl;
+    }
 
 	sockaddr_in myAddress;
 	

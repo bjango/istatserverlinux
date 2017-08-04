@@ -218,7 +218,7 @@ void StatsProcesses::update(long long sampleID, double totalTicks)
 	#elif defined(PROCESSES_KVM_DRAGONFLY)
 	p = kvm_getprocs(kd, KERN_PROC_ALL, sizeof(kinfo_proc), &n_processes);
 	#else
-	p = kvm_getprocs(kd, KERN_PROC_ALL, 0, &n_processes);
+	p = kvm_getprocs(kd, KERN_PROC_PROC, 0, &n_processes);
 	#endif
 
 	for (i = 0; i < n_processes; i++) {
@@ -227,7 +227,11 @@ void StatsProcesses::update(long long sampleID, double totalTicks)
 		#elif defined(PROCESSES_KVM_OPENBSD) || defined(PROCESSES_KVM_NETBSD)
 		if (!((p[i].p_flag & P_SYSTEM)) && p[i].p_comm != NULL) {
 		#else
-		if (!((p[i].ki_flag & P_SYSTEM)) && p[i].ki_comm != NULL) {
+		if (p[i].ki_stat != 0) {
+			#ifdef TDF_IDLETD
+			if(p[i].ki_tdflags & TDF_IDLETD)
+				continue;
+			#endif
 		#endif
 
 		#if defined(PROCESSES_KVM_DRAGONFLY)

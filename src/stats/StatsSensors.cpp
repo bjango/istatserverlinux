@@ -223,6 +223,7 @@ void StatsSensors::init_dev_cpu()
 					label << "CPU " << x;
 					(*cur).label = label.str();
 					(*cur).method = 2;
+					(*cur).kind = 0;
 				}
 			}
         }
@@ -254,6 +255,7 @@ void StatsSensors::init_acpi_thermal()
 					label << "Thermal Zone " << x;
 					(*cur).label = label.str();
 					(*cur).method = 4;
+					(*cur).kind = 0;
 				}
 			}
         }
@@ -314,6 +316,7 @@ void StatsSensors::init_qnap()
 	{
 		(*cur).label = "Temperature";
 		(*cur).method = 3;
+		(*cur).kind = 0;
 	}
 }
 

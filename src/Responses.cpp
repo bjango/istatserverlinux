@@ -43,6 +43,37 @@
 
 using namespace std;
 
+string encodeForXml(string sSrc)
+{
+    ostringstream sRet;
+
+    for( string::const_iterator iter = sSrc.begin(); iter!=sSrc.end(); iter++ )
+    {
+         unsigned char c = (unsigned char)*iter;
+
+         switch( c )
+         {
+             case '&': sRet << "&amp;"; break;
+             case '<': sRet << "&lt;"; break;
+             case '>': sRet << "&gt;"; break;
+             case '"': sRet << "&quot;"; break;
+             case '\'': sRet << "&apos;"; break;
+
+             default:
+              if ( c<32 || c>127 )
+              {
+                   sRet << "&#" << (unsigned int)c << ";";
+              }
+              else
+              {
+                   sRet << c;
+              }
+         }
+    }
+
+    return sRet.str();
+}
+
 string isr_create_header()
 {
 	return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -236,7 +267,7 @@ string isr_network_data(int index, long sampleID, StatsNetwork stats, vector<str
 				break;
 		}
 
-		output << "<item uuid=\"" << item.device << "\" samples=\"" << samples.size() << "\"";
+		output << "<item uuid=\"" << encodeForXml(item.device) << "\" samples=\"" << samples.size() << "\"";
 		if(index == 0)
 		{
 			string addresses = "";
@@ -246,7 +277,7 @@ string isr_network_data(int index, long sampleID, StatsNetwork stats, vector<str
 					addresses += ",";
 				addresses += item.addresses[i];
 			}
-			output << " name=\"" << item.device << "\" ip=\"" << addresses << "\" d=\"" << item.last_down << "\" u=\"" << item.last_up << "\"";
+			output << " name=\"" << encodeForXml(item.device) << "\" ip=\"" << encodeForXml(addresses) << "\" d=\"" << item.last_down << "\" u=\"" << item.last_up << "\"";
 		}
 
 		output << ">";
@@ -366,10 +397,10 @@ string isr_activity_data(int index, long sampleID, StatsActivity stats, vector<s
 				break;
 		}
 
-		output << "<item uuid=\"" << item.device << "\" samples=\"" << samples.size() << "\"";
+		output << "<item uuid=\"" << encodeForXml(item.device) << "\" samples=\"" << samples.size() << "\"";
 		if(index == 0)
 		{
-			output << " name=\"" << item.device << "\" r=\"" << item.last_r << "\" w=\"" << item.last_w << "\" rio=\"" << item.last_rIOPS << "\" wio=\"" << item.last_wIOPS << "\"";
+			output << " name=\"" << encodeForXml(item.device) << "\" r=\"" << item.last_r << "\" w=\"" << item.last_w << "\" rio=\"" << item.last_rIOPS << "\" wio=\"" << item.last_wIOPS << "\"";
 			if(item.mounts.size() > 0)
 			{
 				output << " mounts=\"";
@@ -426,7 +457,7 @@ string isr_disk_data(int index, long sampleID, StatsDisks stats, vector<string> 
 				break;
 		}
 
-		output << "<item bsd=\"" << item.key << "\" uuid=\"" << item.uuid << "\" name=\"" << item.displayName << "\" samples=\"" << samples.size() << "\">";
+		output << "<item bsd=\"" << encodeForXml(item.key) << "\" uuid=\"" << item.uuid << "\" name=\"" << encodeForXml(item.displayName) << "\" samples=\"" << samples.size() << "\">";
 		for(size_t i = 0;i < samples.size(); i++)
 		{
 			struct disk_data sample = samples[i];	
@@ -512,7 +543,7 @@ string isr_sensor_data(int index, long sampleID, StatsSensors stats, vector<stri
 				break;
 		}
 
-		output << "<item low=\"" << item.lowestValue << "\" high=\"" << item.highestValue << "\" uuid=\"" << item.key << "\" name=\"" << item.label << "\" type=\"" << item.kind << "\" samples=\"" << samples.size() << "\">";
+		output << "<item low=\"" << item.lowestValue << "\" high=\"" << item.highestValue << "\" uuid=\"" << item.key << "\" name=\"" << encodeForXml(item.label) << "\" type=\"" << item.kind << "\" samples=\"" << samples.size() << "\">";
 		for(size_t i = 0;i < samples.size(); i++)
 		{
 			struct sensor_data sample = samples[i];	
@@ -575,7 +606,7 @@ string isr_process_data(int index, long sampleID, StatsProcesses stats, vector<s
 
 			for (vector<process_info>::iterator cur = _history.begin(); cur != _history.end(); ++cur)
 			{
-				output << "<item key=\"" << cur->pid << "\" c=\"" << cur->cpu << "\" name=\"" << cur->name << "\"></item>";
+				output << "<item key=\"" << cur->pid << "\" c=\"" << cur->cpu << "\" name=\"" << encodeForXml(string(cur->name)) << "\"></item>";
 				count++;
 				if(count == 20)
 					break;
@@ -590,7 +621,7 @@ string isr_process_data(int index, long sampleID, StatsProcesses stats, vector<s
 	
 			for (vector<process_info>::iterator cur = _history.begin(); cur != _history.end(); ++cur)
 			{
-				output << "<item key=\"" << cur->pid << "\" m=\"" << cur->memory << "\" name=\"" << cur->name << "\"></item>";
+				output << "<item key=\"" << cur->pid << "\" m=\"" << cur->memory << "\" name=\"" << encodeForXml(string(cur->name)) << "\"></item>";
 				count++;
 				if(count == 20)
 					break;
