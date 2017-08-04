@@ -20,7 +20,7 @@ iStat Server is a system monitoring daemon that is used in conjunction with [iSt
 - sqlite3 + development libraries.
 - libxml2 + development libraries.
 
-We have a [package guide available](https://bjango.com/help/istat3/linuxpackages/) to help you install all the required packages for your OS.
+We have a [package guide available](https://github.com/bjango/istatserverlinux/wiki/Package-Guide) to help you install all the required packages for your OS.
 
 -----
 
