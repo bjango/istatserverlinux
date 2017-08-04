@@ -33,3 +33,15 @@ A default passcode is generated on install. It can be found in the preference fi
 
 
 Example boot scripts for rc.d, upstart and system are located inside the resources folder. You may need to customize these depending on your OS
+
+Starting with systemd
+- sudo cp ./resource/systemd/istatserver.service  /etc/systemd/system/istatserver.service
+- sudo service istatserver start
+
+Starting with upstart
+- sudo cp ./resource/upstart/istatserver.conf  /etc/init/istatserver.conf
+- sudo start istatserver
+
+Starting with rc.d
+- sudo cp ./resource/rc.d/istatserver  /etc/rc.d/istatserver
+- sudo /etc/rc.d/istatserver start
