@@ -32,6 +32,10 @@ Building and starting iStat Server
 A default passcode is generated on install. It can be found in the preference file, which is generally located at /usr/local/etc/istatserver/istatserver.conf. iStat for iOS and iStat for macOS will ask for this passcode the first time you connect to your computer.
 
 
+Upgrading iStat Server
+Upgrades follow the same process as standard installs. Please stop istatserver if its running then run the normal build process.
+
+
 Example boot scripts for rc.d, upstart and system are located inside the resources folder. You may need to customize these depending on your OS
 
 Starting with systemd
