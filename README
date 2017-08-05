@@ -1,6 +1,6 @@
 About iStat Server
 
-iStat Server is a system monitoring daemon that is used in conjunction with iStat for iOS (https://bjango.com/ios/istat/) and iStat for macOS (https://bjango.com/mac/istat/) to remotely monitor computers.
+iStat Server is a system monitoring daemon that is used in conjunction with iStat View for iOS (https://bjango.com/ios/istat/) and iStat View for macOS (https://bjango.com/mac/istat/) to remotely monitor computers.
 
 
 Supported OSs
@@ -18,7 +18,7 @@ Requirements
 - sqlite3 + development libraries.
 - libxml2 + development libraries.
 
-We have a package guide available to help you install all the required packages for your OS - https://bjango.com/help/istat3/linuxpackages/
+We have a package guide available to help you install all the required packages for your OS - https://github.com/bjango/istatserverlinux/wiki/Package-Guide
 
 
 Building and starting iStat Server
@@ -29,7 +29,7 @@ Building and starting iStat Server
 - sudo make install
 - sudo /usr/local/bin/istatserver -d (daemon mode)
 
-A default passcode is generated on install. It can be found in the preference file, which is generally located at /usr/local/etc/istatserver/istatserver.conf. iStat for iOS and iStat for macOS will ask for this passcode the first time you connect to your computer.
+A default passcode is generated on install. It can be found in the preference file, which is generally located at /usr/local/etc/istatserver/istatserver.conf. iStat View will ask for this passcode the first time you connect to your computer.
 
 
 Upgrading iStat Server
