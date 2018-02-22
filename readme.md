@@ -4,6 +4,13 @@ iStat Server is a system monitoring daemon that is used in conjunction with [iSt
 
 -----
 
+### Quick Install
+```
+curl -fsSL https://download.bjango.com/istatserverlinux.sh -o istatserverlinux.sh && sh istatserverlinux.sh
+```
+
+-----
+
 ### Supported OSs
 - Linux
 - FreeBSD, DragonFly BSD, OpenBSD, NetBSD and other BSD based OSs
@@ -44,7 +51,7 @@ Upgrades follow the same process as standard installs. Please stop istatserver i
 -----
 
 ### Starting iStat Server at boot
-iStat Server does not install any scripts to start itself at boot. Sample scripts for rc.d, upstart and systemd are included in the resources directory. You may need to customize them depending on your OS. 
+iStat Server does not install any scripts to start itself at boot. Sample scripts for rc.d, upstart and systemd are included in the resources directory. You may need to customize them depending on your OS.
 
 ### Starting with systemd
 - sudo cp ./resource/systemd/istatserver.service  /etc/systemd/system/istatserver.service
@@ -65,11 +72,11 @@ iStat Server is based on [istatd](https://github.com/tiwilliam/istatd) by Willia
 -----
 
 ```
-        :::::::::   :::::::     ::::      ::::    :::   ::::::::    :::::::: 
-       :+:    :+:      :+:    :+: :+:    :+:+:   :+:  :+:    :+:  :+:    :+: 
-      +:+    +:+      +:+   +:+   +:+   :+:+:+  +:+  +:+         +:+    +:+  
-     +#++:++#+       +#+  +#++:++#++:  +#+ +:+ +#+  :#:         +#+    +:+   
-    +#+    +#+      +#+  +#+     +#+  +#+  +#+#+#  +#+   +#+#  +#+    +#+    
-   #+#    #+#  #+# #+#  #+#     #+#  #+#   #+#+#  #+#    #+#  #+#    #+#     
-  #########    #####   ###     ###  ###    ####   ########    ########       
+        :::::::::   :::::::     ::::      ::::    :::   ::::::::    ::::::::
+       :+:    :+:      :+:    :+: :+:    :+:+:   :+:  :+:    :+:  :+:    :+:
+      +:+    +:+      +:+   +:+   +:+   :+:+:+  +:+  +:+         +:+    +:+
+     +#++:++#+       +#+  +#++:++#++:  +#+ +:+ +#+  :#:         +#+    +:+
+    +#+    +#+      +#+  +#+     +#+  +#+  +#+#+#  +#+   +#+#  +#+    +#+
+   #+#    #+#  #+# #+#  #+#     #+#  #+#   #+#+#  #+#    #+#  #+#    #+#
+  #########    #####   ###     ###  ###    ####   ########    ########
 ```
