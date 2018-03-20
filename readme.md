@@ -4,9 +4,9 @@ iStat Server is a system monitoring daemon that is used in conjunction with [iSt
 
 -----
 
-### Quick Install
+### Quick Install (ubuntu, debian, raspbian)
 ```
-curl -fsSL https://download.bjango.com/istatserverlinux.sh -o istatserverlinux.sh && sh istatserverlinux.sh
+curl -fsSL https://files.bjango.com/istatserverlinux/istatserverlinux.sh -o istatserverlinux.sh && sh istatserverlinux.sh
 ```
 
 -----
