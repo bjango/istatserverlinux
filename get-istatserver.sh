@@ -2,7 +2,7 @@
 set -e
 
 # This script is meant for quick & easy install via:
-#   $ curl -fsSL https://download.bjango.com/istatserverlinux.sh -o istatserverlinux.sh
+#   $ curl -fsSL https://files.bjango.com/istatserverlinux/istatserverlinux.sh -o istatserverlinux.sh
 #   $ sh istatserverlinux.sh
 #
 # NOTE: Make sure to verify the contents of the script
