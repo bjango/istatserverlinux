@@ -18,6 +18,10 @@ Requirements
 - sqlite3 + development libraries.
 - libxml2 + development libraries.
 
+Optional Libraries
+- libavahi + development libraries.
+- lm_sensors/libsensors4 + development libraries.
+
 We have a package guide available to help you install all the required packages for your OS - https://github.com/bjango/istatserverlinux/wiki/Package-Guide
 
 

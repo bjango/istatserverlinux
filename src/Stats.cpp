@@ -103,7 +103,11 @@ void Stats::prepare()
 
 #ifdef HAVE_LIBKVM
 	kvm_t *kd;
-	if ((kd = kvm_open(NULL, NULL, NULL, O_RDONLY, NULL)) != NULL)
+    #if defined(__NetBSD__) || defined(__OpenBSD__)
+    if ((kd = kvm_open(NULL, NULL, NULL, KVM_NO_FILES, "kvm_open")) != NULL)
+    #else
+	if ((kd = kvm_open(NULL, NULL, NULL, O_RDONLY, "kvm_open")) != NULL)
+    #endif
 	{
 		cpuStats.kd = kd;
 		loadStats.kd = kd;
