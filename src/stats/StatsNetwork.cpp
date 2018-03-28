@@ -142,7 +142,7 @@ void StatsNetwork::update(long long sampleID)
 		unsigned long long upload;
 		unsigned long long download;
 
-		if(fscanf(fp, "%7[^:]:%llu %*u %*u %*u %*u %*u %*u %*u %llu %*[^\n] ", dev, &download, &upload) > 0)
+		if(fscanf(fp, "%16[^:]:%llu %*u %*u %*u %*u %*u %*u %*u %llu %*[^\n] ", dev, &download, &upload) > 0)
 		{
 #ifdef HAVE_GETIFADDRS
 			if(active_infs.size() > 0)
