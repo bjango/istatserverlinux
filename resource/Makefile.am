@@ -20,21 +20,21 @@ CACHE_FILE = $(sysconfdir)/istatserver/clients.dat
 
 install-exec-hook:
 	@if test -f "$(ADDUSERPW)" ; then \
-		$(ADDUSERPW) groupadd istat  || true ; \
-		$(ADDUSERPW) useradd istat -g istat  || true ; \
+		$(ADDUSERPW) groupadd istat >/dev/null 2>&1  || true ; \
+		$(ADDUSERPW) useradd istat -g istat >/dev/null 2>&1  || true ; \
 	fi
 
 	@if test -f "$(ADDGROUP)" ; then \
-		$(ADDGROUP) istat  || true ; \
+		$(ADDGROUP) istat >/dev/null 2>&1 || true ; \
 	fi
 
 	@if test -f "$(MKGROUP)" ; then \
-		$(MKGROUP) istat  || true ; \
+		$(MKGROUP) istat >/dev/null 2>&1  || true ; \
 	fi
 
 	@if test -f "$(ADDUSER)" ; then \
-		$(ADDUSER) --system -g istat istat  || true ; \
-		$(ADDUSER) -g istat istat  || true ; \
+		$(ADDUSER) --system -g istat istat >/dev/null 2>&1  || true ; \
+		$(ADDUSER) -g istat istat >/dev/null 2>&1  || true ; \
 	fi
 
 	$(MKDIR) -p "$(DESTDIR)$(sysconfdir)";

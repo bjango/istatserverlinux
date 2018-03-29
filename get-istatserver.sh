@@ -19,6 +19,8 @@ get_distribution() {
 
   if [ -r /etc/os-release ]; then
     lsb_dist="$(. /etc/os-release && echo "$ID")"
+  else
+    lsb_dist="$(uname)"
   fi
 
   # Returning an empty string here should be alright since the
@@ -40,14 +42,19 @@ we_did_it() {
   echo "You can now run it as a daemon using the following command:"
   echo "    sudo /usr/local/bin/istatserver -d"
   echo
-  grep -w /usr/local/etc/istatserver/istatserver.conf -e server_code
-  echo "When connecting this iStat Server instance to an iStat View,"
-  echo "you can use this code or the one you set in the config file."
+  echo "The istatserver config file is located at"
+  echo "    /usr/local/etc/istatserver/istatserver.conf"
+  echo
+  echo "iStat View will ask for a passcode the first time you connect."
+  echo "You can edit this passcode in the istatserver config file."
+  echo
+  echo "Here is your current passcode"
+  grep -w /usr/local/etc/istatserver/istatserver.conf -e server_code | grep -v "#" | sed -e "s/server_code//g" | sed -e 's/[ \t]//g'
   echo
   echo "Make sure to take a look at the documentation at:"
   echo "https://bjango.com/help/istat3/istatserverlinux/"
   echo
-  echo "... and yeah, you can run it at boot. Learn how at:"
+  echo "Learn how to run istatserver at boot:"
   echo "https://github.com/bjango/istatserverlinux#starting-istat-server-at-boot"
   echo
 }
@@ -80,23 +87,52 @@ istat_pls() {
   case "$lsb_dist" in
     ubuntu|debian|raspbian)
       $sh_c "apt-get update -qq > /dev/null"
-      $sh_c "apt-get install -y -qq g++ autoconf autogen libxml2-dev libssl-dev libsqlite3-dev libsensors4-dev libavahi-common-dev libavahi-client-dev > /dev/null"
-      $sh_c "curl -fsSL https://download.bjango.com/istatserverlinux -o istatserverlinux.tar.gz"
-      $sh_c "tar -zxf istatserverlinux.tar.gz"
-      $sh_c "mv istatserver-* istatserverlinux"
-      $sh_c "cd istatserverlinux && ./autogen > /dev/null"
-      $sh_c "cd istatserverlinux && ./configure > /dev/null"
-      $sh_c "cd istatserverlinux && make > /dev/null"
-      $sh_c "cd istatserverlinux && make install > /dev/null"
-      we_did_it
-      exit 0
+      $sh_c "apt-get install -y -qq curl g++ autoconf autogen libxml2-dev libssl-dev libsqlite3-dev libsensors4-dev libavahi-common-dev libavahi-client-dev > /dev/null"
       ;;
     centos|fedora)
-      $sh_c "echo 'meh, still to do'"
-      exit 0
+      if [ -r /bin/dnf ]; then
+        $sh_c "dnf -q -y install curl autoconf automake gcc-c++ libxml2-devel openssl-devel sqlite-devel lm_sensors lm_sensors-devel avahi-devel  > /dev/null"
+	  else
+        $sh_c "yum -q -y install curl autoconf automake gcc-c++ libxml2-devel openssl-devel sqlite-devel lm_sensors lm_sensors-devel avahi-devel  > /dev/null"
+	  fi
+      ;;
+    freebsd|dragonfly)
+      $sh_c "env ASSUME_ALWAYS_YES=YES pkg install curl autoconf automake openssl sqlite  > /dev/null"
+      ;;
+    #openbsd)
+    #  $sh_c "pkg_add -I automake-1.9.6p12 autoconf-2.69p2 > /dev/null"
+    #  ;;
+    netbsd)
+      $sh_c "pkg_add -I automake autoconf > /dev/null || :"
+      ;;
+    *)
+	  echo "unsupported OS";
+      exit 1
       ;;
   esac
-  exit 1
+  
+  if [ -r ./istatserverlinux ]; then
+	  $sh_c "rm -r ./istatserverlinux"
+  fi
+
+  echo "Downloading istatserver"
+  $sh_c "curl -fsSL https://download.bjango.com/istatserverlinux -o istatserverlinux.tar.gz"
+
+  echo "Extracting istatserver"
+  $sh_c "tar -zxf istatserverlinux.tar.gz"
+  $sh_c "mv istatserver-* istatserverlinux"
+
+  echo "Building istatserver"
+  $sh_c "cd istatserverlinux && ./autogen > /dev/null"
+  $sh_c "cd istatserverlinux && ./configure > /dev/null"
+  $sh_c "cd istatserverlinux && make > /dev/null"
+  $sh_c "cd istatserverlinux && make install > /dev/null"
+
+  echo "Cleaning up"
+  $sh_c "rm -r ./istatserverlinux > /dev/null"
+  $sh_c "rm ./istatserverlinux.tar.gz > /dev/null"
+  we_did_it
+  exit 0
 }
 
 istat_pls
