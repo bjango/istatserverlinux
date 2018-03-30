@@ -97,7 +97,7 @@ istat_pls() {
 
 # Check if OS is supported or find what OS it is like and try that instead
   case "$lsb_dist" in
-    ubuntu|debian|raspbian|linuxmint|elementary|centos|fedora|freebsd|dragonfly|netbsd|solus|arch|opensuse|manjaro|slackware)
+    ubuntu|debian|raspbian|linuxmint|elementary|centos|fedora|freebsd|dragonfly|netbsd|solus|arch|opensuse|manjaro|slackware|sabayon|gentoo)
       ;;
     *)
 	  case "$lsb_dist_like" in
@@ -157,6 +157,9 @@ istat_pls() {
       ;;
     slackware)
       $sh_c "slackpkg -batch=on -default_answer=y install automake autoconf gcc-g++ curl lm_sensors > /dev/null || :"
+      ;;
+    sabayon|gentoo)
+      $sh_c "emerge --ask=n automake autoconf gcc curl > /dev/null || :"
       ;;
     *)
 	  echo "unsupported OS";
