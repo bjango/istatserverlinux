@@ -23,9 +23,17 @@ get_distribution() {
     lsb_dist="$(uname)"
   fi
 
-  # Returning an empty string here should be alright since the
-  # case statements don't act unless you provide an actual value
   echo "$lsb_dist"
+}
+
+get_distribution_like() {
+  lsb_dist_like=""
+
+  if [ -r /etc/os-release ]; then
+    lsb_dist_like="$(. /etc/os-release && echo "$ID_LIKE")"
+  fi
+
+  echo "$lsb_dist_like"
 }
 
 we_did_it() {
@@ -79,13 +87,45 @@ istat_pls() {
     fi
   fi
 
-  # Some latform detection
+  # Some platform detection
   lsb_dist=$( get_distribution )
   lsb_dist="$(echo "$lsb_dist" | tr '[:upper:]' '[:lower:]')"
+  
+  lsb_dist_like=$( get_distribution_like )
+  lsb_dist_like="$(echo "$lsb_dist_like" | tr '[:upper:]' '[:lower:]')"
+
+
+# Check if OS is supported or find what OS it is like and try that instead
+  case "$lsb_dist" in
+    ubuntu|debian|raspbian|linuxmint|elementary|centos|fedora|freebsd|dragonfly|netbsd|solus|arch|opensuse|manjaro|slackware)
+      ;;
+    *)
+	  case "$lsb_dist_like" in
+	  	ubuntu|debian)
+		  lsb_dist="ubuntu";
+		  ;;
+	  	fedora)
+		  lsb_dist="fedora";
+		  ;;
+	  	freebsd)
+		  lsb_dist="freebsd";
+		  ;;
+	  	arch)
+		  lsb_dist="arch";
+		  ;;
+	  	opensuse)
+		  lsb_dist="opensuse";
+		  ;;
+	  esac
+  esac
+
 
   # Run setup for each distribution accordingly
+  
+  echo "Installing required packages"
+
   case "$lsb_dist" in
-    ubuntu|debian|raspbian)
+    ubuntu|debian|raspbian|linuxmint|elementary)
       $sh_c "apt-get update -qq > /dev/null"
       $sh_c "apt-get install -y -qq curl g++ autoconf autogen libxml2-dev libssl-dev libsqlite3-dev libsensors4-dev libavahi-common-dev libavahi-client-dev > /dev/null"
       ;;
@@ -99,11 +139,24 @@ istat_pls() {
     freebsd|dragonfly)
       $sh_c "env ASSUME_ALWAYS_YES=YES pkg install curl autoconf automake openssl sqlite  > /dev/null"
       ;;
+    solus)
+      $sh_c "eopkg install -y -c system.devel  > /dev/null"
+      $sh_c "eopkg install -y  curl openssl-devel sqlite3-devel lm_sensors-devel  > /dev/null"
+      ;;
+    opensuse)
+      $sh_c "zypper install -y  gcc-c++ libxml2-devel autoconf automake curl openssl-devel sqlite3-devel  > /dev/null"
+      ;;
     #openbsd)
     #  $sh_c "pkg_add -I automake-1.9.6p12 autoconf-2.69p2 > /dev/null"
     #  ;;
+    arch|manjaro)
+      $sh_c "pacman -S --noconfirm automake autoconf openssl sqlite > /dev/null || :"
+      ;;
     netbsd)
       $sh_c "pkg_add -I automake autoconf > /dev/null || :"
+      ;;
+    slackware)
+      $sh_c "slackpkg -batch=on -default_answer=y install automake autoconf gcc-g++ curl lm_sensors > /dev/null || :"
       ;;
     *)
 	  echo "unsupported OS";
