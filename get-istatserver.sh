@@ -2,13 +2,9 @@
 set -e
 
 # This script is meant for quick & easy install via:
-#   $ curl -fsSL https://files.bjango.com/istatserverlinux/istatserverlinux.sh -o istatserverlinux.sh
-#   $ sh istatserverlinux.sh
+#   $ curl -fsSL https://raw.githubusercontent.com/bjango/istatserverlinux/master/get-istatserver.sh
+#   $ sh get-istatserver.sh
 #
-# NOTE: Make sure to verify the contents of the script
-#       you downloaded matches the contents of istatserverlinux.sh
-#       located at https://github.com/bjango/istatserverlinux
-#       before executing.
 
 command_exists() {
   command -v "$@" > /dev/null 2>&1
@@ -172,11 +168,11 @@ istat_pls() {
   fi
 
   echo "Downloading istatserver"
-  $sh_c "curl -fsSL https://download.bjango.com/istatserverlinux -o istatserverlinux.tar.gz"
+  $sh_c "curl -fsSL https://github.com/bjango/istatserverlinux/archive/master.tar.gz -o istatserverlinux.tar.gz"
 
   echo "Extracting istatserver"
   $sh_c "tar -zxf istatserverlinux.tar.gz"
-  $sh_c "mv istatserver-* istatserverlinux"
+  $sh_c "mv istatserverlinux-* istatserverlinux"
 
   echo "Building istatserver"
   $sh_c "cd istatserverlinux && ./autogen > /dev/null"
