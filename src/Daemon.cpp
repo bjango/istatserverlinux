@@ -174,7 +174,7 @@ void Daemon::create(bool _back, const string &_user, const string &_group)
 	
 	length = offsetof(struct sockaddr_un, sun_path) + strlen(sockfile.c_str());
 	
-	if (bind(unix_socket, (struct sockaddr *) &local, length) == -1)
+	if (::bind(unix_socket, (struct sockaddr *) &local, length) == -1)
 	{
 		cout << "Could not bind UNIX socket: " << strerror(errno) << endl;
 		exit(1);
