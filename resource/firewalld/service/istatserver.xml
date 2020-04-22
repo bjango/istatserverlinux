@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>istatserver</short>
+  <description>iStat Server is a system monitoring daemon that is used in conjunction with iStat View.</description>
+  <port protocol="tcp" port="5109"/>
+</service>
